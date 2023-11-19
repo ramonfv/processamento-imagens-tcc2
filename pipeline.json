@@ -1,0 +1,9 @@
+{
+
+    "preProcessamento" : ["blur"],
+    "folha" : "hsv",
+    "fundo" : "hsv",
+    "talos" : "hsv",
+    "processamento" : ["bordas", "regiao", "suavizacao", "ruido"]
+
+}

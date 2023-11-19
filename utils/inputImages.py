@@ -4,36 +4,29 @@ import numpy as np
 import os
 
 
-class ImageLoader():
+class ImageLoader:
     def __init__(self, folderPath):
-        self.folderPath = os.path.abspath(folderPath)
-        self.imagePaths = self.getImagePaths()
-        self.imageGenerator = self.getImageGenerator()
-        self.currentPath = None
-        self.curretFrame = None
+        self.imagePaths = glob.glob(os.path.join(folderPath, '*.jpg'))
+        self.images = [cv2.imread(imagePath) for imagePath in self.imagePaths]
+        self.currenteIndex = 0
 
-    def getImagePaths(self):
-        imagePaths = []
-        imagePaths += glob.glob(os.path.join(self.folderPath, '*.jpg'))
-        return imagePaths
+    def getCurrentImage(self):
+        return self.images[self.currenteIndex]
+    
+    def getNextImage(self):
+        self.currenteIndex += 1
+        if self.currenteIndex >= len(self.images):
+            self.currenteIndex = 0
+        return self.getCurrentImage()
+    
+    def getPreviosImage(self):
+        self.currenteIndex -= 1
+        if self.currenteIndex >= len(self.images):
+            self.currenteIndex = 0
+        return self.getCurrentImage()
+    
+    
+def loadImages(folderPath):
+    return ImageLoader(folderPath)
 
-    def getImageGenerator(self):
-        for imagePath in self.imagePaths:
-            image = cv2.imread(imagePath)
-            yield image, imagePath
 
-    def read(self):
-        if self.currentPath is None:
-            self.currentFrame, self.currentPath = next(self.imageGenerator)
-            return self.currentFrame
-        
-    def nextImage(self):
-        self.currentFrame, self.currentPath = next(self.imageGenerator)
-
-    def prevImage(self):
-        self.imageGenerator = self.getImageGenerator()
-        for image, path in self.imageGenerator:
-            if path == self.currentPath:
-                break
-            self.currentFrame, self.currentPath = image, path
-         
